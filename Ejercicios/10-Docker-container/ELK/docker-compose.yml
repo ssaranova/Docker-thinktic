@@ -1,0 +1,24 @@
+elasticsearch:
+  image: elasticsearch:2.0.0
+  command: elasticsearch  -Des.network.host=0.0.0.0
+  ports:
+    - "9200:9200"
+ 
+logstash:
+  image: logstash:2.0.0
+  volumes:
+    - ./logstash/conf:/conf
+    - ./logstash/logs:/logs
+  links:
+    - elasticsearch:elasticsearch
+  command: logstash -f /conf/logspout.conf
+  ports:
+    - "9998:9998/udp"
+ 
+kibana:
+  image: kibana:4.2.0
+  command: kibana -q
+  links:
+    - elasticsearch
+  ports:
+    - "5601:5601"
